@@ -50,7 +50,7 @@ config :shakespeare_pokedex, ShakespearePokedexWeb.Endpoint,
 config :shakespeare_pokedex, ShakespearePokedexWeb.Endpoint,
   live_reload: [
     patterns: [
-      ~r"priv/gettext/.*(po)$",
+      ~r"priv/gettext/.*(po)$"
     ]
   ]
 

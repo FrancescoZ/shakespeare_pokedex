@@ -14,8 +14,8 @@ defmodule ShakespearePokedexWeb.Router do
   end
 
   scope "/", ShakespearePokedexWeb do
-    pipe_through :browser
-
+    pipe_through :api
+    get("/pokemon/:pokemon_name", PokemonController, :get_pokemon)
   end
 
   # Other scopes may use custom stacks.
