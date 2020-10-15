@@ -50,10 +50,7 @@ config :shakespeare_pokedex, ShakespearePokedexWeb.Endpoint,
 config :shakespeare_pokedex, ShakespearePokedexWeb.Endpoint,
   live_reload: [
     patterns: [
-      ~r"priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$",
       ~r"priv/gettext/.*(po)$",
-      ~r"lib/shakespeare_pokedex_web/(live|views)/.*(ex)$",
-      ~r"lib/shakespeare_pokedex_web/templates/.*(eex)$"
     ]
   ]
 

@@ -16,7 +16,6 @@ defmodule ShakespearePokedexWeb.Router do
   scope "/", ShakespearePokedexWeb do
     pipe_through :browser
 
-    get "/", PageController, :index
   end
 
   # Other scopes may use custom stacks.
