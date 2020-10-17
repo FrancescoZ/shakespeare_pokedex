@@ -1,10 +1,9 @@
 use Mix.Config
 
-# Configure your database
-#
-# The MIX_TEST_PARTITION environment variable can be used
-# to provide built-in test partitioning in CI environment.
-# Run `mix help test` for more information.
+config :shakespeare_pokedex,
+  pokemon_api: ShakespearePokedex.PokemonApiMock,
+  pokemon_manager: ShakespearePokedex.PokemonManagerMock
+
 config :shakespeare_pokedex, ShakespearePokedex.Repo,
   username: System.get_env("POSTGRES_USER"),
   password: System.get_env("POSTGRES_PASSWORD"),
@@ -21,3 +20,5 @@ config :shakespeare_pokedex, ShakespearePokedexWeb.Endpoint,
 
 # Print only warnings and errors during test
 config :logger, level: :warn
+
+config :tesla, adapter: ShakespearePokedex.TeslaMock

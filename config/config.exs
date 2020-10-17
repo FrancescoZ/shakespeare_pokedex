@@ -8,7 +8,12 @@
 use Mix.Config
 
 config :shakespeare_pokedex,
-  ecto_repos: [ShakespearePokedex.Repo]
+  ecto_repos: [ShakespearePokedex.Repo],
+  pokemon_api_url: System.get_env("POKEMON_INFO"),
+  fuse_options: {{:standard, 2, 10_000}, {:reset, 60_000}},
+  pokemon_api: ShakespearePokedex.PokemonApi,
+  pokemon_manager: ShakespearePokedex.PokemonManager,
+  gateway_timeout: 10_00
 
 # Configures the endpoint
 config :shakespeare_pokedex, ShakespearePokedexWeb.Endpoint,
@@ -26,6 +31,7 @@ config :logger, :console,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :tesla, adapter: Tesla.Adapter.Hackney
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env()}.exs"

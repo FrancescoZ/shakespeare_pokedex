@@ -20,7 +20,7 @@ defmodule ShakespearePokedex.MixProject do
   def application do
     [
       mod: {ShakespearePokedex.Application, []},
-      extra_applications: [:logger, :runtime_tools]
+      extra_applications: [:logger, :runtime_tools, :fuse]
     ]
   end
 
@@ -44,7 +44,11 @@ defmodule ShakespearePokedex.MixProject do
       {:telemetry_poller, "~> 0.4"},
       {:gettext, "~> 0.11"},
       {:jason, "~> 1.0"},
-      {:plug_cowboy, "~> 2.0"}
+      {:plug_cowboy, "~> 2.0"},
+      {:tesla, "~> 1.3.0"},
+      {:hackney, "~> 1.16.0"},
+      {:fuse, "~> 2.4"},
+      {:mox, "~> 0.5.1", only: :test}
     ]
   end
 
