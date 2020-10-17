@@ -11,10 +11,12 @@ defmodule ShakespearePokedexWeb.PokemonController do
         conn
         |> put_status(200)
         |> render("show.json", pokemon: pokemon)
+
       {:error, error} ->
         conn
         |> put_status(:not_found)
         |> json(error)
+
       _ ->
         conn
         |> put_status(:not_found)

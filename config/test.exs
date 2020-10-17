@@ -2,7 +2,8 @@ use Mix.Config
 
 config :shakespeare_pokedex,
   pokemon_api: ShakespearePokedex.PokemonApiMock,
-  pokemon_manager: ShakespearePokedex.PokemonManagerMock
+  pokemon_manager: ShakespearePokedex.PokemonManagerMock,
+  shakespeare_api: ShakespearePokedex.ShakespeareApiMock
 
 config :shakespeare_pokedex, ShakespearePokedex.Repo,
   username: System.get_env("POSTGRES_USER"),

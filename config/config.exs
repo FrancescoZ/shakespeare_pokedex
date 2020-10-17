@@ -13,6 +13,8 @@ config :shakespeare_pokedex,
   fuse_options: {{:standard, 2, 10_000}, {:reset, 60_000}},
   pokemon_api: ShakespearePokedex.PokemonApi,
   pokemon_manager: ShakespearePokedex.PokemonManager,
+  shakespeare_api: ShakespearePokedex.ShakespeareApi,
+  shakespeare_api_url: System.get_env("TRANSLATION_URL"),
   gateway_timeout: 10_00
 
 # Configures the endpoint

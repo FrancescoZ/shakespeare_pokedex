@@ -144,7 +144,6 @@ defmodule ShakespearePokedex.PokemonManagerTest do
   @api ShakespearePokedex.PokemonApiMock
   @subject ShakespearePokedex.PokemonManager
 
-
   describe "get_info when pokemon" do
     test "is available returns a pokemon name and a description" do
       expect(@api, :get_pokemon, fn @pokemon_name ->
@@ -470,15 +469,16 @@ defmodule ShakespearePokedex.PokemonManagerTest do
 
     test "is not available returns an error" do
       expect(@api, :get_pokemon, fn @pokemon_name ->
-        {:ok, %{
-          "name" => "charizard",
-          "order" => 7,
-          "species" => %{
-            "name" => "charizard",
-            "url" => "https =>//pokeapi.co/api/v2/pokemon-species/6/"
-          },
-          "id" => @pokemon_id
-        }}
+        {:ok,
+         %{
+           "name" => "charizard",
+           "order" => 7,
+           "species" => %{
+             "name" => "charizard",
+             "url" => "https =>//pokeapi.co/api/v2/pokemon-species/6/"
+           },
+           "id" => @pokemon_id
+         }}
       end)
 
       assert @subject.get_info(@pokemon_name) == {:error, "invalid pokemon"}
