@@ -25,7 +25,8 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
       "translation" => "shakespeare"
     }
   }
-
+  @translation "Thee did giveth mr. Tim a hearty meal,  but unfortunately what he did doth englut did maketh him kicketh the bucket."
+  @error {:error, "invalid translation"}
   setup do
     :fuse.reset(@subject)
     :ok
@@ -44,7 +45,23 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
 
       {:ok, result} = @subject.translate(@text)
 
-      assert result == @valid_response
+      assert result == @translation
+    end
+
+    test "receives an incorrect value" do
+      expect(@http_client, :call, fn %{
+                                       method: :post,
+                                       url: @get_translate_url,
+                                       body: @parameter
+                                     },
+                                     _opts ->
+        {:ok, %Tesla.Env{status: 200, body: %{
+          something: "invalid"
+        }
+      }}
+      end)
+
+      assert @error == @subject.translate(@text)
     end
 
     test "returns a known error" do
@@ -57,7 +74,7 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
         {:error, :unavailable}
       end)
 
-      assert {:error, _} = @subject.translate(@text)
+      assert  @error = @subject.translate(@text)
     end
 
     test "returns an unknown error" do
@@ -70,7 +87,7 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
         {:error, "stange error generated"}
       end)
 
-      assert {:error, _} = @subject.translate(@text)
+      assert @error  = @subject.translate(@text)
     end
 
     test "returns a 400" do
@@ -83,7 +100,7 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
         {:ok, %Tesla.Env{status: 400, body: "Random 400 error"}}
       end)
 
-      assert {:error, "client_error"} == @subject.translate(@text)
+      assert @error  == @subject.translate(@text)
     end
 
     test "returns a 500" do
@@ -96,7 +113,7 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
         {:ok, %Tesla.Env{status: 500}}
       end)
 
-      assert {:error, _} = @subject.translate(@text)
+      assert @error  = @subject.translate(@text)
     end
 
     test "returns a 300" do
@@ -109,7 +126,7 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
         {:ok, %Tesla.Env{status: 300, body: "Random 300 error"}}
       end)
 
-      assert {:error, "Generic error"} ==
+      assert @error ==
                @subject.translate(@text)
     end
   end

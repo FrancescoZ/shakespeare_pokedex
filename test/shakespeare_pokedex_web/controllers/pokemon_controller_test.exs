@@ -3,7 +3,7 @@ defmodule ShakespearePokedexWeb.PokemonControllerTest do
   use ShakespearePokedexWeb.ConnCase, async: true
 
   @manager ShakespearePokedex.PokemonManagerMock
-  @pokemon_name "yetAnotherTestname"
+  @pokemon_name "yetanothertestname"
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}

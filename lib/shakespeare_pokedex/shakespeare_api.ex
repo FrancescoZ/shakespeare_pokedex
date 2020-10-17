@@ -24,6 +24,19 @@ defmodule ShakespearePokedex.ShakespeareApi do
       "shakespeare"
       |> post(%{text: text})
       |> handle_response()
+      |> handle_translate()
+
+  defp handle_translate(
+         {:ok,
+          %{
+            "contents" => %{
+              "translated" => translation
+            }
+          }}
+       ),
+       do: {:ok, translation}
+
+  defp handle_translate(_response), do: {:error, "invalid translation"}
 
   defp handle_response({
          :ok,

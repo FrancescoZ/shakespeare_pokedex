@@ -15,7 +15,7 @@ config :shakespeare_pokedex,
   pokemon_manager: ShakespearePokedex.PokemonManager,
   shakespeare_api: ShakespearePokedex.ShakespeareApi,
   shakespeare_api_url: System.get_env("TRANSLATION_URL"),
-  gateway_timeout: 10_00
+  gateway_timeout: 20_00
 
 # Configures the endpoint
 config :shakespeare_pokedex, ShakespearePokedexWeb.Endpoint,

@@ -6,7 +6,7 @@ defmodule ShakespearePokedexWeb.PokemonController do
   @manager Application.get_env(:shakespeare_pokedex, :pokemon_manager)
 
   def get_pokemon(conn, %{"pokemon_name" => pokemon_name}) do
-    case @manager.get_info(pokemon_name) do
+    case @manager.get_info(String.downcase(pokemon_name)) do
       {:ok, pokemon} ->
         conn
         |> put_status(200)

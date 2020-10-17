@@ -27,24 +27,87 @@ defmodule ShakespearePokedex.PokemonApi do
       "/pokemon/#{pokemon_name}"
       |> get()
       |> handle_response()
+      |> handle_get_pokemon()
 
   def get_description(pokemon_id),
     do:
       "/characteristic/#{pokemon_id}"
       |> get()
       |> handle_response()
+      |> handle_get_description()
 
   def get_species(pokemon_id),
     do:
       "/pokemon-species/#{pokemon_id}"
       |> get()
       |> handle_response()
+      |> handle_get_species()
 
   def get_color(pokemon_id),
     do:
       "/pokemon-color/#{pokemon_id}"
       |> get()
       |> handle_response()
+      |> handle_get_color()
+
+  defp handle_get_pokemon({:ok, %{"name" => name, "id" => id, "abilities" => moves}}) do
+    abilities = moves |> Enum.map(fn %{"ability" => %{"name" => name}} -> name end)
+    {:ok, %{name: name, id: id, abilities: abilities}}
+  end
+
+  defp handle_get_pokemon({:ok, %{"name" => name, "id" => id}}),
+    do: {:ok, %{name: name, id: id, abilities: ["nothing"]}}
+
+  defp handle_get_pokemon(_response), do: {:error, "invalid pokemon"}
+
+  defp handle_get_description({:ok, %{"descriptions" => descriptions}}) do
+    characteristics =
+      descriptions
+      |> Enum.filter(fn %{"language" => %{"name" => language}} ->
+        language == "en"
+      end)
+      |> Enum.map(fn %{"description" => description, "language" => %{"name" => "en"}} ->
+        description
+        |> String.replace(["\n", "\f", "\e"], " ")
+      end)
+
+    {:ok, characteristics}
+  end
+
+  defp handle_get_description(_response), do: {:ok, []}
+
+  defp handle_get_species({:ok, %{"flavor_text_entries" => flavors}}) do
+    species =
+      flavors
+      |> Enum.filter(fn %{"language" => %{"name" => language}} ->
+        language == "en"
+      end)
+      |> Enum.map(fn %{"flavor_text" => description, "language" => %{"name" => "en"}} ->
+        description
+        |> String.replace(["\n", "\f", "\e"], " ")
+      end)
+
+    {:ok, Enum.uniq(species)}
+  end
+
+  defp handle_get_species({:ok, %{"form_descriptions" => flavors}}) do
+    species =
+      flavors
+      |> Enum.filter(fn %{"language" => %{"name" => language}} ->
+        language == "en"
+      end)
+      |> Enum.map(fn %{"description" => description, "language" => %{"name" => "en"}} ->
+        description
+        |> String.replace(["\n", "\f", "\e"], " ")
+      end)
+
+    {:ok, Enum.uniq(species)}
+  end
+
+  defp handle_get_species(_response), do: {:ok, []}
+
+  defp handle_get_color({:ok, %{"name" => color}}), do: {:ok, color}
+  defp handle_get_color(_response), do: {:ok, "unknonw"}
 
   defp handle_response({
          :ok,
