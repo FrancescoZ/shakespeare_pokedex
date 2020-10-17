@@ -1,6 +1,7 @@
 defmodule ShakespearePokedex.PokemonManagerTest do
   import Mox
   use ShakespearePokedex.DataCase
+  alias ShakespearePokedex.PokemonCache
   use ExUnit.Case, async: false
 
   @pokemon_name "testMeEasly"
@@ -32,7 +33,7 @@ defmodule ShakespearePokedex.PokemonManagerTest do
   @translator_api ShakespearePokedex.ShakespeareApiMock
   @subject ShakespearePokedex.PokemonManager
 
-  describe "get_info when pokemon" do
+  describe "get_info when cache is empty and pokemon" do
     test "is available returns a pokemon name and a description" do
       expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
@@ -50,7 +51,13 @@ defmodule ShakespearePokedex.PokemonManagerTest do
         {:ok, @valid_color}
       end)
 
-      expect(@translator_api, :translate, fn "testMeEasly. Its color is black.Loves to eat. It can do: solar-powerblaze.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." -> {:ok, @translation} end)
+      expect(
+        @translator_api,
+        :translate,
+        fn "testMeEasly. Its color is black.Loves to eat. It can do: solar-powerblaze.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." ->
+          {:ok, @translation}
+        end
+      )
 
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
@@ -77,7 +84,13 @@ defmodule ShakespearePokedex.PokemonManagerTest do
         {:ok, @valid_color}
       end)
 
-      expect(@translator_api, :translate, fn "testMeEasly. Its color is black.Loves to eat. It can do: nothing.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." -> {:ok, @translation} end)
+      expect(
+        @translator_api,
+        :translate,
+        fn "testMeEasly. Its color is black.Loves to eat. It can do: nothing.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." ->
+          {:ok, @translation}
+        end
+      )
 
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
@@ -112,7 +125,14 @@ defmodule ShakespearePokedex.PokemonManagerTest do
         {:ok, @invalid_color}
       end)
 
-      expect(@translator_api, :translate, fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.." -> {:ok, @translation} end)
+      expect(
+        @translator_api,
+        :translate,
+        fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.." ->
+          {:ok, @translation}
+        end
+      )
+
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
@@ -122,7 +142,7 @@ defmodule ShakespearePokedex.PokemonManagerTest do
     end
   end
 
-  describe "get_info when color" do
+  describe "get_info when cache is empty and color" do
     test "is available it returns a pokemon name and description with it" do
       expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
@@ -140,7 +160,14 @@ defmodule ShakespearePokedex.PokemonManagerTest do
         {:ok, @valid_color}
       end)
 
-      expect(@translator_api, :translate, fn "testMeEasly. Its color is black.. It can do: solar-powerblaze.." -> {:ok, @translation} end)
+      expect(
+        @translator_api,
+        :translate,
+        fn "testMeEasly. Its color is black.. It can do: solar-powerblaze.." ->
+          {:ok, @translation}
+        end
+      )
+
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
@@ -166,7 +193,14 @@ defmodule ShakespearePokedex.PokemonManagerTest do
         {:ok, @invalid_color}
       end)
 
-      expect(@translator_api, :translate, fn  "testMeEasly. Its color is unknonw.Loves to eat. It can do: solar-powerblaze.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." -> {:ok, @translation} end)
+      expect(
+        @translator_api,
+        :translate,
+        fn "testMeEasly. Its color is unknonw.Loves to eat. It can do: solar-powerblaze.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." ->
+          {:ok, @translation}
+        end
+      )
+
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
@@ -176,7 +210,7 @@ defmodule ShakespearePokedex.PokemonManagerTest do
     end
   end
 
-  describe "get_info when species" do
+  describe "get_info when cache is empty and species" do
     test "is available it returns a pokemon name and description with it" do
       expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
@@ -190,7 +224,13 @@ defmodule ShakespearePokedex.PokemonManagerTest do
         @empty
       end)
 
-      expect(@translator_api, :translate, fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." -> {:ok, @translation} end)
+      expect(
+        @translator_api,
+        :translate,
+        fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." ->
+          {:ok, @translation}
+        end
+      )
 
       expect(@pokemon_api, :get_color, fn @pokemon_id ->
         {:ok, @invalid_color}
@@ -221,7 +261,14 @@ defmodule ShakespearePokedex.PokemonManagerTest do
         {:ok, @valid_color}
       end)
 
-      expect(@translator_api, :translate, fn "testMeEasly. Its color is black.. It can do: solar-powerblaze.." -> {:ok, @translation} end)
+      expect(
+        @translator_api,
+        :translate,
+        fn "testMeEasly. Its color is black.. It can do: solar-powerblaze.." ->
+          {:ok, @translation}
+        end
+      )
+
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
@@ -231,7 +278,7 @@ defmodule ShakespearePokedex.PokemonManagerTest do
     end
   end
 
-  describe "get_info when abilities" do
+  describe "get_info when cache is empty and abilities" do
     test "is available returns a pokemon name and a description" do
       expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
@@ -249,7 +296,14 @@ defmodule ShakespearePokedex.PokemonManagerTest do
         {:ok, @invalid_color}
       end)
 
-      expect(@translator_api, :translate, fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.." -> {:ok, @translation} end)
+      expect(
+        @translator_api,
+        :translate,
+        fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.." ->
+          {:ok, @translation}
+        end
+      )
+
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
@@ -259,7 +313,7 @@ defmodule ShakespearePokedex.PokemonManagerTest do
     end
   end
 
-  describe "get_info when description" do
+  describe "get_info when cache is empty and description" do
     test "is available it returns a pokemon name and description with it" do
       expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
@@ -277,7 +331,14 @@ defmodule ShakespearePokedex.PokemonManagerTest do
         {:ok, @invalid_color}
       end)
 
-      expect(@translator_api, :translate, fn "testMeEasly. Its color is unknonw.Loves to eat. It can do: solar-powerblaze.." -> {:ok, @translation} end)
+      expect(
+        @translator_api,
+        :translate,
+        fn "testMeEasly. Its color is unknonw.Loves to eat. It can do: solar-powerblaze.." ->
+          {:ok, @translation}
+        end
+      )
+
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
@@ -303,7 +364,14 @@ defmodule ShakespearePokedex.PokemonManagerTest do
         {:ok, @invalid_color}
       end)
 
-      expect(@translator_api, :translate, fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.." -> {:ok, @translation} end)
+      expect(
+        @translator_api,
+        :translate,
+        fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.." ->
+          {:ok, @translation}
+        end
+      )
+
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
@@ -313,7 +381,7 @@ defmodule ShakespearePokedex.PokemonManagerTest do
     end
   end
 
-  describe "get_info/1 when translation" do
+  describe "get_info/1 when cache is empty and translation" do
     test "is not available" do
       expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
@@ -331,9 +399,26 @@ defmodule ShakespearePokedex.PokemonManagerTest do
         {:ok, @valid_color}
       end)
 
-      expect(@translator_api, :translate, fn "testMeEasly. Its color is black.. It can do: solar-powerblaze.." -> @translation_error end)
+      expect(
+        @translator_api,
+        :translate,
+        fn "testMeEasly. Its color is black.. It can do: solar-powerblaze.." ->
+          @translation_error
+        end
+      )
 
       assert @subject.get_info(@pokemon_name) == @translation_error
+    end
+  end
+
+  describe "get_info/1 when cache is not empty" do
+    test "the manager do not call any api" do
+      {:ok, pokemon} =
+        %{description: "some description", name: @pokemon_name}
+        |> PokemonCache.create_pokemon()
+
+      {:ok, answer} = @subject.get_info(@pokemon_name)
+      assert answer == %{name: pokemon.name, description: pokemon.description}
     end
   end
 end

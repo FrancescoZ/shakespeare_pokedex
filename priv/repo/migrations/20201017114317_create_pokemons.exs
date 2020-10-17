@@ -8,6 +8,7 @@ defmodule ShakespearePokedex.Repo.Migrations.CreatePokemons do
 
       timestamps()
     end
+
     create index("pokemons", [:name])
   end
 end
