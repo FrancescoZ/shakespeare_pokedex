@@ -25,64 +25,70 @@ defmodule ShakespearePokedex.PokemonManagerTest do
   @invalid_color "unknonw"
   @empty {:ok, []}
 
-  @api ShakespearePokedex.PokemonApiMock
+  @translation "I;m not a poeth what do i know"
+  @translation_error {:error, "invalid translation"}
+
+  @pokemon_api ShakespearePokedex.PokemonApiMock
+  @translator_api ShakespearePokedex.ShakespeareApiMock
   @subject ShakespearePokedex.PokemonManager
 
   describe "get_info when pokemon" do
     test "is available returns a pokemon name and a description" do
-      expect(@api, :get_pokemon, fn @pokemon_name ->
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
       end)
 
-      expect(@api, :get_species, fn @pokemon_id ->
+      expect(@pokemon_api, :get_species, fn @pokemon_id ->
         {:ok, @valid_species}
       end)
 
-      expect(@api, :get_description, fn @pokemon_id ->
+      expect(@pokemon_api, :get_description, fn @pokemon_id ->
         {:ok, @valid_characteristic}
       end)
 
-      expect(@api, :get_color, fn @pokemon_id ->
+      expect(@pokemon_api, :get_color, fn @pokemon_id ->
         {:ok, @valid_color}
       end)
+
+      expect(@translator_api, :translate, fn "testMeEasly. Its color is black.Loves to eat. It can do: solar-powerblaze.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." -> {:ok, @translation} end)
 
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
                name: @pokemon_name,
-               description:
-                 "testMeEasly. Its color is black. Loves to eat . It can do: solar-powerblaze . It is When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs."
+               description: @translation
              }
     end
 
     test "is available returns a pokemon name and a description even without abilities" do
-      expect(@api, :get_pokemon, fn @pokemon_name ->
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon_no_abilities}
       end)
 
-      expect(@api, :get_species, fn @pokemon_id ->
+      expect(@pokemon_api, :get_species, fn @pokemon_id ->
         {:ok, @valid_species}
       end)
 
-      expect(@api, :get_description, fn @pokemon_id ->
+      expect(@pokemon_api, :get_description, fn @pokemon_id ->
         {:ok, @valid_characteristic}
       end)
 
-      expect(@api, :get_color, fn @pokemon_id ->
+      expect(@pokemon_api, :get_color, fn @pokemon_id ->
         {:ok, @valid_color}
       end)
+
+      expect(@translator_api, :translate, fn "testMeEasly. Its color is black.Loves to eat. It can do: nothing.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." -> {:ok, @translation} end)
 
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
                name: @pokemon_name,
-               description:
-                 "testMeEasly. Its color is black. Loves to eat . It can do: nothing . It is When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs."
+               description: @translation
              }
     end
 
     test "is not available returns an error" do
-      expect(@api, :get_pokemon, fn @pokemon_name ->
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         @pokemon_error
       end)
 
@@ -90,101 +96,103 @@ defmodule ShakespearePokedex.PokemonManagerTest do
     end
 
     test "is available and the rest is not it returns a pokemon name and a description" do
-      expect(@api, :get_pokemon, fn @pokemon_name ->
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
       end)
 
-      expect(@api, :get_species, fn @pokemon_id ->
+      expect(@pokemon_api, :get_species, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_description, fn @pokemon_id ->
+      expect(@pokemon_api, :get_description, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_color, fn @pokemon_id ->
+      expect(@pokemon_api, :get_color, fn @pokemon_id ->
         {:ok, @invalid_color}
       end)
 
+      expect(@translator_api, :translate, fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.." -> {:ok, @translation} end)
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
                name: @pokemon_name,
-               description:
-                 "testMeEasly. Its color is unknonw.  . It can do: solar-powerblaze . It is "
+               description: @translation
              }
     end
   end
 
   describe "get_info when color" do
     test "is available it returns a pokemon name and description with it" do
-      expect(@api, :get_pokemon, fn @pokemon_name ->
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
       end)
 
-      expect(@api, :get_species, fn @pokemon_id ->
+      expect(@pokemon_api, :get_species, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_description, fn @pokemon_id ->
+      expect(@pokemon_api, :get_description, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_color, fn @pokemon_id ->
+      expect(@pokemon_api, :get_color, fn @pokemon_id ->
         {:ok, @valid_color}
       end)
 
+      expect(@translator_api, :translate, fn "testMeEasly. Its color is black.. It can do: solar-powerblaze.." -> {:ok, @translation} end)
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
                name: @pokemon_name,
-               description:
-                 "testMeEasly. Its color is black.  . It can do: solar-powerblaze . It is "
+               description: @translation
              }
     end
 
     test "is not available returns a pokemon name and description with unknown color" do
-      expect(@api, :get_pokemon, fn @pokemon_name ->
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
       end)
 
-      expect(@api, :get_species, fn @pokemon_id ->
+      expect(@pokemon_api, :get_species, fn @pokemon_id ->
         {:ok, @valid_species}
       end)
 
-      expect(@api, :get_description, fn @pokemon_id ->
+      expect(@pokemon_api, :get_description, fn @pokemon_id ->
         {:ok, @valid_characteristic}
       end)
 
-      expect(@api, :get_color, fn @pokemon_id ->
+      expect(@pokemon_api, :get_color, fn @pokemon_id ->
         {:ok, @invalid_color}
       end)
 
+      expect(@translator_api, :translate, fn  "testMeEasly. Its color is unknonw.Loves to eat. It can do: solar-powerblaze.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." -> {:ok, @translation} end)
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
                name: @pokemon_name,
-               description:
-                 "testMeEasly. Its color is unknonw. Loves to eat . It can do: solar-powerblaze . It is When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs."
+               description: @translation
              }
     end
   end
 
   describe "get_info when species" do
     test "is available it returns a pokemon name and description with it" do
-      expect(@api, :get_pokemon, fn @pokemon_name ->
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
       end)
 
-      expect(@api, :get_species, fn @pokemon_id ->
+      expect(@pokemon_api, :get_species, fn @pokemon_id ->
         {:ok, @valid_species}
       end)
 
-      expect(@api, :get_description, fn @pokemon_id ->
+      expect(@pokemon_api, :get_description, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_color, fn @pokemon_id ->
+      expect(@translator_api, :translate, fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs.." -> {:ok, @translation} end)
+
+      expect(@pokemon_api, :get_color, fn @pokemon_id ->
         {:ok, @invalid_color}
       end)
 
@@ -192,117 +200,140 @@ defmodule ShakespearePokedex.PokemonManagerTest do
 
       assert answer == %{
                name: @pokemon_name,
-               description:
-                 "testMeEasly. Its color is unknonw.  . It can do: solar-powerblaze . It is When the bulb on its back grows large, it appears to lose the ability to stand on its hind legs."
+               description: @translation
              }
     end
 
     test "is not available it returns a pokemon name and description without any species" do
-      expect(@api, :get_pokemon, fn @pokemon_name ->
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
       end)
 
-      expect(@api, :get_species, fn @pokemon_id ->
+      expect(@pokemon_api, :get_species, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_description, fn @pokemon_id ->
+      expect(@pokemon_api, :get_description, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_color, fn @pokemon_id ->
+      expect(@pokemon_api, :get_color, fn @pokemon_id ->
         {:ok, @valid_color}
       end)
 
+      expect(@translator_api, :translate, fn "testMeEasly. Its color is black.. It can do: solar-powerblaze.." -> {:ok, @translation} end)
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
                name: @pokemon_name,
-               description:
-                 "testMeEasly. Its color is black.  . It can do: solar-powerblaze . It is "
+               description: @translation
              }
     end
   end
 
   describe "get_info when abilities" do
     test "is available returns a pokemon name and a description" do
-      expect(@api, :get_pokemon, fn @pokemon_name ->
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
       end)
 
-      expect(@api, :get_species, fn @pokemon_id ->
+      expect(@pokemon_api, :get_species, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_description, fn @pokemon_id ->
+      expect(@pokemon_api, :get_description, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_color, fn @pokemon_id ->
+      expect(@pokemon_api, :get_color, fn @pokemon_id ->
         {:ok, @invalid_color}
       end)
 
+      expect(@translator_api, :translate, fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.." -> {:ok, @translation} end)
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
                name: @pokemon_name,
-               description:
-                 "testMeEasly. Its color is unknonw.  . It can do: solar-powerblaze . It is "
+               description: @translation
              }
     end
   end
 
   describe "get_info when description" do
     test "is available it returns a pokemon name and description with it" do
-      expect(@api, :get_pokemon, fn @pokemon_name ->
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
       end)
 
-      expect(@api, :get_species, fn @pokemon_id ->
+      expect(@pokemon_api, :get_species, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_description, fn @pokemon_id ->
+      expect(@pokemon_api, :get_description, fn @pokemon_id ->
         {:ok, @valid_characteristic}
       end)
 
-      expect(@api, :get_color, fn @pokemon_id ->
+      expect(@pokemon_api, :get_color, fn @pokemon_id ->
         {:ok, @invalid_color}
       end)
 
+      expect(@translator_api, :translate, fn "testMeEasly. Its color is unknonw.Loves to eat. It can do: solar-powerblaze.." -> {:ok, @translation} end)
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
                name: @pokemon_name,
-               description:
-                 "testMeEasly. Its color is unknonw. Loves to eat . It can do: solar-powerblaze . It is "
+               description: @translation
              }
     end
 
     test "is not available it returns a pokemon name and description without any species" do
-      expect(@api, :get_pokemon, fn @pokemon_name ->
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
         {:ok, @valid_pokemon}
       end)
 
-      expect(@api, :get_species, fn @pokemon_id ->
+      expect(@pokemon_api, :get_species, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_description, fn @pokemon_id ->
+      expect(@pokemon_api, :get_description, fn @pokemon_id ->
         @empty
       end)
 
-      expect(@api, :get_color, fn @pokemon_id ->
+      expect(@pokemon_api, :get_color, fn @pokemon_id ->
         {:ok, @invalid_color}
       end)
 
+      expect(@translator_api, :translate, fn "testMeEasly. Its color is unknonw.. It can do: solar-powerblaze.." -> {:ok, @translation} end)
       {:ok, answer} = @subject.get_info(@pokemon_name)
 
       assert answer == %{
                name: @pokemon_name,
-               description:
-                 "testMeEasly. Its color is unknonw.  . It can do: solar-powerblaze . It is "
+               description: @translation
              }
+    end
+  end
+
+  describe "get_info/1 when translation" do
+    test "is not available" do
+      expect(@pokemon_api, :get_pokemon, fn @pokemon_name ->
+        {:ok, @valid_pokemon}
+      end)
+
+      expect(@pokemon_api, :get_species, fn @pokemon_id ->
+        @empty
+      end)
+
+      expect(@pokemon_api, :get_description, fn @pokemon_id ->
+        @empty
+      end)
+
+      expect(@pokemon_api, :get_color, fn @pokemon_id ->
+        {:ok, @valid_color}
+      end)
+
+      expect(@translator_api, :translate, fn "testMeEasly. Its color is black.. It can do: solar-powerblaze.." -> @translation_error end)
+
+      assert @subject.get_info(@pokemon_name) == @translation_error
     end
   end
 end

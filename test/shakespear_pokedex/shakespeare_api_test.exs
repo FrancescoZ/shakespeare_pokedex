@@ -55,10 +55,13 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
                                        body: @parameter
                                      },
                                      _opts ->
-        {:ok, %Tesla.Env{status: 200, body: %{
-          something: "invalid"
-        }
-      }}
+        {:ok,
+         %Tesla.Env{
+           status: 200,
+           body: %{
+             something: "invalid"
+           }
+         }}
       end)
 
       assert @error == @subject.translate(@text)
@@ -74,7 +77,7 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
         {:error, :unavailable}
       end)
 
-      assert  @error = @subject.translate(@text)
+      assert @error = @subject.translate(@text)
     end
 
     test "returns an unknown error" do
@@ -87,7 +90,7 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
         {:error, "stange error generated"}
       end)
 
-      assert @error  = @subject.translate(@text)
+      assert @error = @subject.translate(@text)
     end
 
     test "returns a 400" do
@@ -100,7 +103,7 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
         {:ok, %Tesla.Env{status: 400, body: "Random 400 error"}}
       end)
 
-      assert @error  == @subject.translate(@text)
+      assert @error == @subject.translate(@text)
     end
 
     test "returns a 500" do
@@ -113,7 +116,7 @@ defmodule ShakespearePokedex.ShakespeareApiTest do
         {:ok, %Tesla.Env{status: 500}}
       end)
 
-      assert @error  = @subject.translate(@text)
+      assert @error = @subject.translate(@text)
     end
 
     test "returns a 300" do
